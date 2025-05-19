@@ -1,0 +1,10 @@
+{
+  "rootDirectory": "api",
+
+  "build": {
+    "command": "npm ci && npm run build"
+  },
+  "deploy": {
+    "command": "npm run start:prod"
+  }
+}
