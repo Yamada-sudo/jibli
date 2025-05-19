@@ -1,0 +1,37 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  mobile:
+    name: Mobile CI & Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: cd mobile && npm ci
+      - run: cd mobile && npm run lint
+      - run: cd mobile && npm test
+      - run: cd mobile && npx expo publish --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  backend:
+    name: API CI & Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: cd api && npm ci
+      - run: cd api && npm run lint
+      - run: cd api && npm test
+      - name: Deploy to Railway
+        uses: railwayapp/railway-action@v1
+        with:
+          railwayToken: ${{ secrets.RAILWAY_TOKEN }}
